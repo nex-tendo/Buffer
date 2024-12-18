@@ -6,15 +6,37 @@ import (
 )
 
 type GoBuffer struct {
-	data   []byte
-	cursor int64
+	buf  []byte
+	off  int64
+	cap  int64
+	boff int64
+	bcap int64
 }
 
-func NewGoBuffer(data []byte) *GoBuffer {
-	return &GoBuffer{
-		data:   data,
-		cursor: 0,
+func NewGoBuffer(slices ...[]byte) *GoBuffer {
+	buf := &GoBuffer{
+		buf:  []byte{},
+		off:  0,
+		boff: 0,
 	}
+
+	if len(slices) == 0 {
+		buf.Refresh()
+		return buf
+	}
+
+	if len(slices) == 1 {
+		buf.buf = slices[0]
+		buf.Refresh()
+		return buf
+	}
+
+	for _, slice := range slices {
+		buf.buf = append(buf.buf, slice...)
+	}
+
+	buf.Refresh()
+	return buf
 }
 
 func (b *GoBuffer) ReadBit(out *byte, offset int64) error {
@@ -44,4 +66,10 @@ func (b *GoBuffer) ReadBits(out *uint64, off, n int64) error {
   
 	*out = result
 	return nil
+}
+
+func (b *GoBuffer) Refresh() {
+	b.bcap = int64(len(b.buf))
+	
+	b.cap = b.bcap * 8
 }
