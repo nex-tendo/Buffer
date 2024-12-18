@@ -73,3 +73,27 @@ func (b *GoBuffer) Refresh() {
 	
 	b.cap = b.bcap * 8
 }
+
+// Original code of Grow from https://github.com/habak67/gobuffer/blob/master/buffer.go#L151
+func (b *GoBuffer) Grow(size int64) {
+	if size < 0 {
+		panic("Invalid size: cannot be negative")
+	}
+
+	if size <= b.bcap {
+		b.buf = b.buf[0 : b.off+size]
+		b.Refresh()
+		return
+	}
+
+	newCapacity := b.bcap * 2
+	if newCapacity < size {
+		newCapacity = size
+	}
+
+	tmp := make([]byte, newCapacity)
+	copy(tmp, b.buf)
+
+	b.buf = tmp
+	b.Refresh()
+}
