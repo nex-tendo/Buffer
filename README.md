@@ -1,2 +1,2 @@
-# Buffer
-Buffer Library written in go.
+# GoBuffer
+- GoBuffer Library written in go.
