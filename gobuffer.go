@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"errors"
 )
 
 type GoBuffer struct {
@@ -77,7 +78,7 @@ func (b *GoBuffer) Refresh() {
 // Original code of Grow from https://github.com/habak67/gobuffer/blob/master/buffer.go#L151
 func (b *GoBuffer) Grow(size int64) {
 	if size < 0 {
-		panic("Invalid size: cannot be negative")
+		panic(fmt.Errorf("Invalid size: cannot be negative"))
 	}
 
 	if size <= b.bcap {
