@@ -1,9 +1,7 @@
-package main
+package gobuffer
 
 import (
 	"fmt"
-	"log"
-	"errors"
 )
 
 type GoBuffer struct {
@@ -44,11 +42,11 @@ func (b *GoBuffer) ReadBit(out *byte, offset int64) error {
 	byteIndex := offset / 8
 	bitIndex := 7 - (offset % 8)
 
-	if byteIndex >= int64(len(b.data)) {
+	if byteIndex >= int64(len(b.buf)) {
 		return fmt.Errorf("out of bounds")
 	}
 
-	*out = (b.data[byteIndex] >> uint(bitIndex)) & 1
+	*out = (b.buf[byteIndex] >> uint(bitIndex)) & 1
 	return nil
 }
 
@@ -64,14 +62,14 @@ func (b *GoBuffer) ReadBits(out *uint64, off, n int64) error {
 
 		result = (result << 1) | uint64(bout)
 	}
-  
+
 	*out = result
 	return nil
 }
 
 func (b *GoBuffer) Refresh() {
 	b.bcap = int64(len(b.buf))
-	
+
 	b.cap = b.bcap * 8
 }
 
